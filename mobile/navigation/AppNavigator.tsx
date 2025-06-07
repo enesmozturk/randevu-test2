@@ -3,6 +3,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import VenuesScreen from '../screens/VenuesScreen';
+import VenueDetailScreen from '../screens/VenueDetailScreen';
 import { useAuth } from '../contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
@@ -15,7 +16,10 @@ export default function AppNavigator() {
       {token ? (
         <Stack.Screen name="Venues" component={VenuesScreen} />
       ) : (
+        <>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+        <Stack.Screen name="VenueDetail" component={VenueDetailScreen} />
+        </>
       )}
     </Stack.Navigator>
   );
