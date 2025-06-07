@@ -15,7 +15,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('me')
   @ApiOperation({ summary: 'Giriş yapan kullanıcının bilgilerini getirir.' })
-  async getMe(@Req() req: { user: { sub: string } }) {
+  async getMe(@Req() req) {
     const userId = req.user?.sub;
 if (!userId) throw new UnauthorizedException('User not found');
     return this.usersService.getUserById(userId);

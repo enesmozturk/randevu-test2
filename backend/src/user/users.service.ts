@@ -5,9 +5,9 @@ import { PrismaService } from '../prisma/prisma.service';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUserById(userId: string) {
+  async getUserById(id: string) {
     const user = await this.prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: id },
       select: {
         id: true,
         name: true,
