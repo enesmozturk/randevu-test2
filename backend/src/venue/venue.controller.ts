@@ -32,9 +32,9 @@ export class VenueController {
   @Post()
   @ApiOperation({ summary: 'Yeni bir toplu alan (venue) oluşturur.' })
   @ApiBody({ type: CreateVenueDto })
-  createVenue(@Body() dto: CreateVenueDto, @Req() req: Request) {
-    const user = req.user as any;
-    return this.venueService.createVenue(user.id, dto);
+  createVenue(@Body() dto: CreateVenueDto, @Req() req) {
+    const ownerId = req.user.userId; // JwtStrategy'de validate'dan dönen userId
+    return this.venueService.createVenue(ownerId, dto);
   }
 
   @Get()

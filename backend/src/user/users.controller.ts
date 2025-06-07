@@ -16,8 +16,8 @@ export class UsersController {
   @Get('me')
   @ApiOperation({ summary: 'Giriş yapan kullanıcının bilgilerini getirir.' })
   async getMe(@Req() req) {
-    const userId = req.user?.sub;
-if (!userId) throw new UnauthorizedException('User not found');
+    const userId = req.user?.userId;
+    if (!userId) throw new UnauthorizedException('User not found');
     return this.usersService.getUserById(userId);
   }
 }

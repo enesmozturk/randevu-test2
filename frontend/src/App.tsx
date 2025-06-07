@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import PrivateRoute from './components/PrivateRoute';
+import VenuesPage from './pages/VenuesPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route path="/venues" element={<VenuesPage />} />
       </Routes>
     </Router>
   );

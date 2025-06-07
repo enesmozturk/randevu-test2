@@ -6,7 +6,7 @@ export class LoginDto {
   @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({ example: 'gizliSifre123' })
+  @ApiProperty({ example: '123456' })
   @IsNotEmpty()
   password: string;
 }

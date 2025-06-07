@@ -9,10 +9,16 @@ export class VenueService {
   constructor(private prisma: PrismaService) {}
 
   async createVenue(ownerId: string, dto: CreateVenueDto) {
+      if (!ownerId) {
+    throw new Error('ownerId is required');
+  }
+
     return this.prisma.venue.create({
       data: {
-        ...dto,
-        ownerId,
+        name: dto.name,
+        type: dto.type,
+        address: dto.address,
+        ownerId: ownerId,  // burada ownerId kesin olmalı
       },
     });
   }
