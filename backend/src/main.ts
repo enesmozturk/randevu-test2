@@ -7,10 +7,15 @@ async function bootstrap() {
 
   // CORS ayarı - frontend portunu burada belirt
   app.enableCors({
-    origin: 'http://localhost:3001', // frontend adresin
+    origin: [
+      'http://localhost:3000', // React web app (örnek)
+      'http://localhost:3001', // başka bir frontend olabilir
+      'http://localhost:8081', // Expo web
+      'exp://192.168.1.X:19000', // Expo Go cihazdan erişim
+      'http://192.168.1.X:8081', // Expo web cihazdan erişim
+    ],
     credentials: true,
   });
-
   // Swagger Config
   const config = new DocumentBuilder()
     .setTitle('Binenso API')

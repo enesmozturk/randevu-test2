@@ -1,26 +1,15 @@
-// mobile/navigation/AppNavigator.tsx
-import React from 'react';
+// src/navigation/AppNavigator.tsx
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from '../screens/LoginScreen';
+import HomeScreen from '../screens/HomeScreen';
 import VenuesScreen from '../screens/VenuesScreen';
-import VenueDetailScreen from '../screens/VenueDetailScreen';
-import { useAuth } from '../contexts/AuthContext';
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
-  const { token } = useAuth();
-
   return (
     <Stack.Navigator>
-      {token ? (
-        <Stack.Screen name="Venues" component={VenuesScreen} />
-      ) : (
-        <>
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="VenueDetail" component={VenueDetailScreen} />
-        </>
-      )}
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="VenuesScreen" component={VenuesScreen} />
     </Stack.Navigator>
   );
 }

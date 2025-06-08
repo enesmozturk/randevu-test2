@@ -6,34 +6,38 @@ import axios from 'axios';
 
 export default function LoginScreen() {
   const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const { setToken } = useAuth();
 
   const handleLogin = async () => {
     try {
-      // 1. doğrulama kodu gönder
-      await axios.post('http://localhost:3000/auth/request-code', { phone });
-
-      // (demo amaçlı) doğrudan 0000 koduyla giriş yapalım
-      const res = await axios.post('http://localhost:3000/auth/verify-code', {
+      const res = await axios.post('http://192.168.1.7:3000/auth/login', {
         phone,
-        code: '0000', // backend test ortamında bu kodla çalışıyor
+        password,
       });
 
       setToken(res.data.accessToken);
     } catch (err) {
       console.error(err);
-      Alert.alert('Giriş Başarısız', 'Telefon numarası ya da kod hatalı olabilir.');
+      Alert.alert('Giriş Başarısız', 'Telefon numarası ya da şifre hatalı olabilir.');
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Telefon ile Giriş</Text>
+      <Text style={styles.title}>Telefon ve Şifre ile Giriş</Text>
       <TextInput
         placeholder="Telefon Numarası"
         value={phone}
         onChangeText={setPhone}
         keyboardType="phone-pad"
+        style={styles.input}
+      />
+      <TextInput
+        placeholder="Şifre"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
         style={styles.input}
       />
       <Button title="Giriş Yap" onPress={handleLogin} />
