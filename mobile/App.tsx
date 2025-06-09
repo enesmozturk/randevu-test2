@@ -4,29 +4,28 @@ import { View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider } from './contexts/AuthContext';
-import { useRouter } from 'expo-router'; // yönlendirme için
-import RootNavigator from './navigation/RootNavigator';
+import AppNavigator from './navigation/AppNavigator';
 
 // Splash ekranın otomatik kapanmasını engelle
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [isAppReady, setAppReady] = useState(false);
-  const router = useRouter();
+  const [initialRoute, setInitialRoute] = useState<'Onboarding1' | 'Homepage'>('Onboarding1');
 
   useEffect(() => {
     const prepareApp = async () => {
       try {
         // Onboarding daha önce gösterildi mi?
         const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
-
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 saniye bekle
-
         if (hasSeenOnboarding === 'true') {
-          router.replace('/home'); // daha önce gördüyse anasayfaya git
+          setInitialRoute('Homepage');
         } else {
-          router.replace('/onboarding1'); // ilk kez açılıyorsa onboarding'e yönlendir
+          setInitialRoute('Onboarding1');
         }
+
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 saniye bekle
+
 
       } catch (e) {
         console.warn(e);
@@ -52,7 +51,7 @@ export default function App() {
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <AuthProvider>
-        {/* yönlendirme yapılan ekranlar burada render olacak */}
+        <AppNavigator initialRouteName={initialRoute} />
       </AuthProvider>
     </View>
   );

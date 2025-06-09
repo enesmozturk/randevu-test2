@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import PaginationDots from './PaginationDots'; 
 
 type Props = {
   image: any;
@@ -7,9 +8,11 @@ type Props = {
   description: string;
   buttonLabel: string;
   onNext: () => void;
+  totalSteps: number;     // Yeni prop
+  currentStep: number;    // Yeni prop
 };
 
-const OnboardingTemplate = ({ image, title, description, buttonLabel, onNext }: Props) => {
+const OnboardingTemplate = ({ image, title, description, buttonLabel, onNext, totalSteps, currentStep }: Props) => {
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.image} resizeMode="contain" />
@@ -18,6 +21,7 @@ const OnboardingTemplate = ({ image, title, description, buttonLabel, onNext }: 
       <TouchableOpacity style={styles.button} onPress={onNext}>
         <Text style={styles.buttonText}>{buttonLabel}</Text>
       </TouchableOpacity>
+      <PaginationDots totalSteps={totalSteps} currentStep={currentStep} />
     </View>
   );
 };
