@@ -1,10 +1,8 @@
-// App.tsx
+// mobile/App.tsx
 import React, { useEffect, useCallback, useState } from 'react';
 import { View } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider } from './contexts/AuthContext';
-import { useRouter } from 'expo-router'; // yönlendirme için
 import RootNavigator from './navigation/RootNavigator';
 
 // Splash ekranın otomatik kapanmasını engelle
@@ -12,27 +10,17 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [isAppReady, setAppReady] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     const prepareApp = async () => {
       try {
-        // Onboarding daha önce gösterildi mi?
-        const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
-
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 saniye bekle
-
-        if (hasSeenOnboarding === 'true') {
-          router.replace('/home'); // daha önce gördüyse anasayfaya git
-        } else {
-          router.replace('/onboarding1'); // ilk kez açılıyorsa onboarding'e yönlendir
-        }
-
+        // Buraya dilediğin hazırlık kodlarını ekleyebilirsin (örn. token kontrolü vs.)
+        await new Promise(resolve => setTimeout(resolve, 2000)); // 2 saniye bekle
       } catch (e) {
         console.warn(e);
       } finally {
         setAppReady(true);
-        await SplashScreen.hideAsync();
+        await SplashScreen.hideAsync(); // splash ekranı gizle
       }
     };
 
@@ -40,6 +28,7 @@ export default function App() {
   }, []);
 
   const onLayoutRootView = useCallback(() => {
+    // Splash sadece ilk render'da etkili
     if (isAppReady) {
       SplashScreen.hideAsync();
     }
@@ -52,7 +41,7 @@ export default function App() {
   return (
     <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <AuthProvider>
-        {/* yönlendirme yapılan ekranlar burada render olacak */}
+        <RootNavigator />
       </AuthProvider>
     </View>
   );
