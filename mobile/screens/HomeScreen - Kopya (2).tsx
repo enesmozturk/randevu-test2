@@ -12,17 +12,12 @@ import {
   Platform,
   StatusBar,
   Animated,
-  Modal,
-  ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from 'react-native';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-import ilData from '../assets/data/il.json';
-import ilceData from '../assets/data/ilce.json';
+
 
 const slogans = [
   'Toplu Yaşam Alanlarında Kolay Randevu',
@@ -38,6 +33,7 @@ function RotatingSlogan() {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      // Önce opacity 0'a düşür, sonra tekrar 1 yap ve sloganı değiştir
       Animated.sequence([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -50,6 +46,7 @@ function RotatingSlogan() {
           useNativeDriver: true,
         }),
       ]).start();
+
       setIndex((prev) => (prev + 1) % slogans.length);
     }, 3000);
 
@@ -67,32 +64,30 @@ function RotatingSlogan() {
 }
 
 function HomeScreen() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedIl, setSelectedIl] = useState<string | null>(null);
-  const [selectedIlce, setSelectedIlce] = useState<string | null>(null);
-  const [selectedTurler, setSelectedTurler] = useState<string[]>([]);
-
-  const mekanTurleri = ['Spor Salonu', 'Konferans Salonu', 'Misafir Odası', 'Oyun Odası'];
-
-  const ilceler = ilceData.filter((ilce) => ilce.il_id === selectedIl);
-
-  const toggleTur = (tur: string) => {
-    setSelectedTurler((prev) =>
-      prev.includes(tur) ? prev.filter((t) => t !== tur) : [...prev, tur]
-    );
-  };
-
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" translucent={false} />
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="#fff"
+        translucent={false}
+      />
 
+      {/* Marka logosu */}
       <View style={styles.logoContainer}>
-        <Image source={require('../assets/images/homelogo.jpg')} style={styles.logo} resizeMode="contain" />
+        <Image
+          source={require('../assets/images/homelogo.jpg')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
       </View>
 
+      {/* Hoşgeldiniz yazısı */}
       <Text style={styles.welcomeText}>Hoş geldiniz, Misafir</Text>
+
+      {/* Slogan */}
       <RotatingSlogan />
 
+      {/* Arama ve Filtre */}
       <View style={styles.searchSection}>
         <View style={styles.searchRow}>
           <TextInput
@@ -100,17 +95,19 @@ function HomeScreen() {
             placeholder="Mekan adı ara..."
             placeholderTextColor="#999"
           />
-          <TouchableOpacity style={styles.filterButton} onPress={() => setModalVisible(true)}>
+          <TouchableOpacity style={styles.filterButton}>
             <Icon name="options-outline" size={24} color="#0066FF" />
             <Text style={styles.filterButtonText}>Filtre</Text>
           </TouchableOpacity>
         </View>
 
+        {/* Mekan Ara Butonu */}
         <TouchableOpacity style={styles.searchButton}>
           <Text style={styles.searchButtonText}>Mekan Ara</Text>
         </TouchableOpacity>
       </View>
 
+      {/* QR Kod */}
       <View style={styles.qrContainerWrapper}>
         <TouchableOpacity style={styles.qrContainer}>
           <Icon name="qr-code-outline" size={48} color="#0066FF" />
@@ -118,6 +115,7 @@ function HomeScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Tab Bar */}
       <View style={styles.tabBar}>
         <TouchableOpacity style={styles.tabItem}>
           <Icon name="home-outline" size={28} color="#0066FF" />
@@ -125,7 +123,7 @@ function HomeScreen() {
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem}>
           <Icon name="list-outline" size={28} color="#666" />
-          <Text style={styles.tabTextInactive}>Mekanlar</Text>
+          <Text style={styles.tabTextInactive}>Mekan Listesi</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tabItem}>
           <Icon name="videocam-outline" size={28} color="#666" />
@@ -140,91 +138,6 @@ function HomeScreen() {
           <Text style={styles.tabTextInactive}>Profil</Text>
         </TouchableOpacity>
       </View>
-
-      <Modal 
-      visible={modalVisible} 
-      animationType="slide" 
-      transparent={true}>
-        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-        <View style={styles.modalBackground}>
-          <TouchableWithoutFeedback onPress={() => {}}>
-          <View style={styles.modalContainer}>
-
-            <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}
-            >
-              <Icon name="close" size={24} color="#333" />
-            </TouchableOpacity>
-
-            <Text style={styles.modalTitle}>Filtre Seçenekleri</Text>
-            <ScrollView>
-
-              <Text style={styles.modalLabel}>Mekan Türü</Text>
-              <ScrollView horizontal={true} showsHorizontalScrollIndicator={true} style={{ marginVertical: 8 }}>
-              {mekanTurleri.map((tur) => (
-                <TouchableOpacity key={tur} onPress={() => toggleTur(tur)}>
-                  <Text
-                    style={[
-                      styles.modalOption,
-                      selectedTurler.includes(tur) && styles.selectedOption,
-                    ]}
-                  >
-                    {tur}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-              </ScrollView>
-              <Text style={styles.modalLabel}>İl ve İlçe Seç</Text>
-              {ilData.map((il) => {
-                const isSelectedIl = selectedIl === il.id;
-                const ilgiliIlceler = ilceData.filter((ilce) => ilce.il_id === il.id);
-
-                return (
-                  <View key={il.id} style={{ marginBottom: 8 }}>
-                    <TouchableOpacity
-                      onPress={() => {
-                        setSelectedIl(isSelectedIl ? null : il.id);
-                        setSelectedIlce(null);
-                      }}
-                    >
-                      <Text style={[styles.modalOption, isSelectedIl && styles.selectedOption]}>
-                        {il.name}
-                      </Text>
-                    </TouchableOpacity>
-
-                    {isSelectedIl && ilgiliIlceler.length > 0 && (
-                      <View style={{ paddingLeft: 12 }}>
-                        {ilgiliIlceler.map((ilce) => (
-                          <TouchableOpacity key={ilce.id} onPress={() => setSelectedIlce(ilce.id)}>
-                            <Text
-                              style={[
-                                styles.modalOption,
-                                selectedIlce === ilce.id && styles.selectedOption,
-                              ]}
-                            >
-                              • {ilce.name}
-                            </Text>
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    )}
-                  </View>
-                );
-              })}
-
-
-            </ScrollView>
-
-            <TouchableOpacity style={styles.searchButton} onPress={() => setModalVisible(false)}>
-              <Text style={styles.searchButtonText}>Filtreyi Uygula</Text>
-            </TouchableOpacity>
-          </View>
-          </TouchableWithoutFeedback>
-        </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-
     </SafeAreaView>
   );
 }
@@ -363,47 +276,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContainer: {
-    backgroundColor: '#fff',
-    width: '90%',
-    borderRadius: 12,
-    padding: 16,
-    maxHeight: '80%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: '#111',
-  },
-  modalLabel: {
-    fontWeight: '600',
-    marginTop: 12,
-    marginBottom: 4,
-    color: '#333',
-  },
-  modalOption: {
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-    fontSize: 14,
-    color: '#111',
-  },
-  selectedOption: {
-    color: '#0066FF',
-    fontWeight: '700',
-  },
-closeButton: {
-  position: 'absolute',
-  top: 12,
-  right: 12,
-  zIndex: 10,
-  padding: 4,
-},
-
 });
